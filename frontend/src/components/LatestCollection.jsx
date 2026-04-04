@@ -19,8 +19,8 @@ const LatestCollection = () => {
     <section className="py-20">
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
-        <div className="space-y-4">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-gray-400">
+        <div className="space-y-4"> 
+          <span className="inline-block px-4 py-1.5 rounded-full mr-4 bg-white/5 border border-white/10 text-sm text-gray-400">
             Just Dropped
           </span>
           <Title text1={"LATEST"} text2={"ARRIVALS"} />

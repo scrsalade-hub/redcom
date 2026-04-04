@@ -20,7 +20,7 @@ const Contact = () => {
     <div className="pt-6 pb-20 animate-fade-in">
       {/* Header */}
       <div className="text-center mb-16">
-        <span className="inline-block px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-gray-400 mb-4">
+        <span className="inline-block px-4 py-1.5 rounded-full bg-white/5 border mr-4 border-white/10 text-sm text-gray-400">
           Get in Touch
         </span>
         <Title text1={"CONTACT"} text2={"US"} />

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import React, { useState, useEffect, useContext } from 'react'
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import Collection from './pages/Collection'
@@ -15,11 +15,176 @@ import SearchBar from './components/SearchBar'
 import Verify from './pages/Verify'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+// IMPORT YOUR AUTH CONTEXT
+import { ShopContext } from './context/ShopContext'
+
+// SVG Icon Components (No external library needed)
+const XIcon = ({ size = 20, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </svg>
+)
+
+const UserPlusIcon = ({ size = 20, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+    <circle cx="8.5" cy="7" r="4"></circle>
+    <line x1="20" y1="8" x2="20" y2="14"></line>
+    <line x1="23" y1="11" x2="17" y2="11"></line>
+  </svg>
+)
+
+const LogInIcon = ({ size = 20, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+    <polyline points="10 17 15 12 10 7"></polyline>
+    <line x1="15" y1="12" x2="3" y2="12"></line>
+  </svg>
+)
+
+const ShoppingBagIcon = ({ size = 28, className = "" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+    <line x1="3" y1="6" x2="21" y2="6"></line>
+    <path d="M16 10a4 4 0 0 1-8 0"></path>
+  </svg>
+)
+
+// Auth Modal Component
+const AuthModal = ({ isOpen, onClose, isDarkMode }) => {
+  const navigate = useNavigate()
+
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      {/* Backdrop with blur - clicking outside won't close it */}
+      <div 
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300"
+      />
+      
+      {/* Modal Container */}
+      <div className={`
+        relative w-full max-w-md transform transition-all duration-500 scale-100
+        ${isDarkMode 
+          ? 'bg-gray-900/95 border border-white/10' 
+          : 'bg-white/95 border border-black/10'
+        }
+        rounded-2xl shadow-2xl overflow-hidden
+      `}>
+
+        {/* Modal Content */}
+        <div className="p-8 text-center">
+          {/* Icon */}
+          <div className={`
+            mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-6
+            ${isDarkMode 
+              ? 'bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-lg shadow-violet-500/25' 
+              : 'bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-lg shadow-violet-500/25'
+            }
+          `}>
+            <ShoppingBagIcon size={28} className="text-white" />
+          </div>
+
+          {/* Title */}
+          <h2 className={`
+            text-2xl font-bold mb-3
+            ${isDarkMode ? 'text-white' : 'text-gray-900'}
+          `}>
+            Login Required
+          </h2>
+
+          {/* Description */}
+          <p className={`
+            mb-8 leading-relaxed
+            ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}
+          `}>
+            Please login or create an account to place orders and enjoy a personalized shopping experience.
+          </p>
+
+          {/* Action Buttons */}
+          <div className="space-y-3">
+            {/* Login Button */}
+            <button
+              onClick={() => {
+                onClose()
+                navigate('/login')
+              }}
+              className={`
+                w-full py-3.5 px-6 rounded-xl font-semibold flex items-center justify-center gap-2
+                transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]
+                ${isDarkMode 
+                  ? 'bg-white text-gray-900 hover:bg-gray-100 shadow-lg shadow-white/10' 
+                  : 'bg-gray-900 text-white hover:bg-gray-800 shadow-lg shadow-black/20'
+                }
+              `}
+            >
+              <LogInIcon size={20} />
+              Login to Your Account
+            </button>
+
+            {/* Sign Up Button */}
+            <button
+              onClick={() => {
+                onClose()
+                navigate('/login')
+              }}
+              className={`
+                w-full py-3.5 px-6 rounded-xl font-semibold flex items-center justify-center gap-2
+                border-2 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]
+                ${isDarkMode 
+                  ? 'border-white/20 text-white hover:bg-white/10 hover:border-white/40' 
+                  : 'border-gray-900/20 text-gray-900 hover:bg-gray-900/5 hover:border-gray-900/40'
+                }
+              `}
+            >
+              <UserPlusIcon size={20} />
+              Create New Account
+            </button>
+          </div>
+
+          {/* Skip Option - Only way to close without logging in */}
+          <button
+            onClick={onClose}
+            className={`
+              mt-6 text-sm font-medium transition-colors duration-200 underline underline-offset-4
+              ${isDarkMode 
+                ? 'text-gray-500 hover:text-gray-300' 
+                : 'text-gray-500 hover:text-gray-700'
+              }
+            `}
+          >
+            Continue browsing without login
+          </button>
+        </div>
+
+        {/* Decorative Elements */}
+        <div className={`
+          absolute -top-24 -right-24 w-48 h-48 rounded-full blur-3xl opacity-20 pointer-events-none
+          ${isDarkMode ? 'bg-violet-500' : 'bg-violet-400'}
+        `} />
+        <div className={`
+          absolute -bottom-24 -left-24 w-48 h-48 rounded-full blur-3xl opacity-20 pointer-events-none
+          ${isDarkMode ? 'bg-fuchsia-500' : 'bg-fuchsia-400'}
+        `} />
+      </div>
+    </div>
+  )
+}
 
 const App = () => {
   const location = useLocation()
   const [scrolled, setScrolled] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useState(true) // Default to dark for seamless experience
+  const [isDarkMode, setIsDarkMode] = useState(true)
+  const [showAuthModal, setShowAuthModal] = useState(false)
+
+  // GET AUTH STATE FROM YOUR CONTEXT - REPLACE WITH YOUR ACTUAL AUTH LOGIC
+  const { token } = useContext(ShopContext) || {}
+  const isLoggedIn = !!token // Convert to boolean - true if token exists
+
+  // Check if current page is login page
+  const isLoginPage = location.pathname === '/login'
 
   // Handle scroll effect for navbar
   useEffect(() => {
@@ -34,6 +199,31 @@ const App = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [location.pathname])
+
+  // Show auth modal only if NOT logged in and NOT on login page
+  useEffect(() => {
+    // If logged in, ensure modal is always closed
+    if (isLoggedIn) {
+      setShowAuthModal(false)
+      return
+    }
+    
+    // Only show if not logged in and not on login page
+    if (!isLoginPage) {
+      const timer = setTimeout(() => {
+        setShowAuthModal(true)
+      }, 500)
+      return () => clearTimeout(timer)
+    }
+  }, [isLoggedIn, isLoginPage])
+
+  // Show modal when trying to access protected routes while logged out
+  useEffect(() => {
+    const protectedRoutes = ['/place-order', '/orders', '/cart']
+    if (protectedRoutes.includes(location.pathname) && !isLoggedIn && !isLoginPage) {
+      setShowAuthModal(true)
+    }
+  }, [location.pathname, isLoggedIn, isLoginPage])
 
   return (
     <div 
@@ -84,6 +274,15 @@ const App = () => {
         }
       `}</style>
 
+      {/* Auth Modal - Only show when NOT logged in and NOT on login page */}
+      {!isLoggedIn && !isLoginPage && (
+        <AuthModal 
+          isOpen={showAuthModal} 
+          onClose={() => setShowAuthModal(false)}
+          isDarkMode={isDarkMode}
+        />
+      )}
+
       {/* Toast Container with Dark Mode Styling */}
       <ToastContainer
         position="top-right"
@@ -104,73 +303,55 @@ const App = () => {
         `}
       />
 
-      {/* Glassmorphism Navigation Container */}
-      <div 
-        className={`
-          fixed top-0 left-0 right-0 z-50 transition-all duration-500
-          ${scrolled 
-            ? 'py-2' 
-            : 'py-4'
-          }
-        `}
-      >
-        {/* Backdrop blur layer */}
+      {/* Glassmorphism Navigation Container - Hidden on login page */}
+      {!isLoginPage && (
         <div 
           className={`
-            absolute inset-0 transition-all duration-500
+            fixed top-0 left-0 right-0 z-50 transition-all duration-500
             ${scrolled 
-              ? 'bg-gray-900/80 backdrop-blur-xl border-b border-white/10 shadow-lg shadow-black/20' 
-              : 'bg-transparent'
+              ? 'py-2' 
+              : 'py-4'
             }
           `}
-        />
-        
-        {/* Navigation Content */}
-        <div className="relative z-10 px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
-          <div className="flex items-center justify-between">
-            <Navbar />
-            
-            {/* Theme Toggle Button */}
-            {/* <button
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              className={`
-                ml-4 p-2 rounded-full transition-all duration-300
-                ${isDarkMode 
-                  ? 'bg-white/10 hover:bg-white/20 text-yellow-400' 
-                  : 'bg-black/5 hover:bg-black/10 text-orange-500'
-                }
-              `}
-              aria-label="Toggle theme"
-            >
-              {isDarkMode ? (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-                </svg>
-              )}
-            </button> */}
-          </div>
+        >
+          {/* Backdrop blur layer */}
+          <div 
+            className={`
+              absolute inset-0 transition-all duration-500
+              ${scrolled 
+                ? 'bg-gray-900/80 backdrop-blur-xl border-b border-white/10 shadow-lg shadow-black/20' 
+                : 'bg-transparent'
+              }
+            `}
+          />
           
-          {/* SearchBar Integration */}
-          <div className={`
-            mt-4 transition-all duration-300 overflow-hidden
-            ${scrolled ? 'opacity-0 h-0 mt-0' : 'opacity-100 h-auto'}
-          `}>
-            <SearchBar />
+          {/* Navigation Content */}
+          <div className="relative z-10 px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
+            <div className="flex items-center justify-between">
+              <Navbar />
+            </div>
+            
+            {/* SearchBar Integration */}
+            <div className={`
+              mt-4 transition-all duration-300 overflow-hidden
+              ${scrolled ? 'opacity-0 h-0 mt-0' : 'opacity-100 h-auto'}
+            `}>
+              <SearchBar />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Main Content Area with Proper Spacing */}
+      {/* Main Content Area - Centered for login page, normal for others */}
       <main className={`
-        min-h-screen pt-24 pb-12
-        ${scrolled ? 'pt-20' : 'pt-32'}
+        min-h-screen flex flex-col
+        ${isLoginPage 
+          ? 'items-center justify-center p-4' 
+          : (scrolled ? 'pt-20 pb-12' : 'pt-32 pb-12')
+        }
         transition-all duration-500
       `}>
-        <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
+        <div className={`${isLoginPage ? 'w-full max-w-md' : 'px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'}`}>
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/collection' element={<Collection />} />
@@ -186,29 +367,31 @@ const App = () => {
         </div>
       </main>
 
-      {/* Footer with Glassmorphism */}
-      <footer className={`
-        relative mt-auto border-t transition-all duration-500
-        ${isDarkMode 
-          ? 'border-white/10 bg-gray-900/50 backdrop-blur-lg' 
-          : 'border-black/10 bg-white/50 backdrop-blur-lg'
-        }
-      `}>
-        <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw] py-12">
-          <Footer />
-        </div>
-        
-        {/* Bottom Bar */}
-        <div className={`
-          border-t px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw] py-4 text-center text-sm
+      {/* Footer with Glassmorphism - Hidden on login page */}
+      {!isLoginPage && (
+        <footer className={`
+          relative mt-auto border-t transition-all duration-500
           ${isDarkMode 
-            ? 'border-white/10 text-gray-500' 
-            : 'border-black/10 text-gray-600'
+            ? 'border-white/10 bg-gray-900/50 backdrop-blur-lg' 
+            : 'border-black/10 bg-white/50 backdrop-blur-lg'
           }
         `}>
-          <p>© 2025 Your Brand. Crafted with precision.</p>
-        </div>
-      </footer>
+          <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw] py-12">
+            <Footer />
+          </div>
+          
+          {/* Bottom Bar */}
+          <div className={`
+            border-t px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw] py-4 text-center text-sm
+            ${isDarkMode 
+              ? 'border-white/10 text-gray-500' 
+              : 'border-black/10 text-gray-600'
+            }
+          `}>
+            <p>© 2025 Your Brand. Crafted with precision.</p>
+          </div>
+        </footer>
+      )}
     </div>
   )
 }
