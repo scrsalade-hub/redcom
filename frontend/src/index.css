@@ -1,0 +1,63 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Prata&display=swap");
+@import "tailwindcss";
+
+a.active hr {
+  display: block;
+}
+
+* {
+  font-family: Outfit;
+}
+
+.prata-regular {
+  font-family: "Prata", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-dropdown .menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  padding-top: 16px;
+  z-index: 50;
+}
+
+.profile-dropdown:hover .menu {
+  display: block;
+}
+
+.cursor {
+  cursor: pointer;
+}
+.cursor:hover {
+  color: black;
+}
+
+.ease {
+  transition-property: transform;
+  transition-duration: 300ms;
+  transition-timing-function: ease-in-out;
+}
+.ease:hover {
+ transform: scale(1.1);
+}
+
+::-webkit-scrollbar{
+  display: none;
+}
+
+  @media (max-width:640px) {
+    a.active{
+      background-color: black;
+      color: white;
+      border-bottom: 6px solid #bdbbbb;
+      border-radius: 0px 12px 0px 12px;
+    }
+  }
