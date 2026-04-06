@@ -7,10 +7,10 @@ const Hero = () => {
     <div className="relative min-h-[80vh] sm:min-h-[90vh] flex items-center overflow-hidden rounded-3xl">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
-       <div className="flex w-full h-full items-end justify-end">
+       <div className="flex w-full h-full md:items-end md:justify-end">
          <video autoPlay muted loop
           src={assets.herovid} 
-          className="h-full w-auto object-cover object-center opacity-60" 
+          className="h-full md:w-auto w-full object-cover object-center opacity-85" 
           alt="Hero Background" 
         >
         <source src={assets.herovid} type="video/mp4" />
